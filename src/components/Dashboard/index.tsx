@@ -10,22 +10,6 @@ const Dashboard: React.FC = () => {
     const [search, setSearch] = React.useState("");
     const [errorMessage, setErrorMessage] = React.useState("");
 
-    const getResult = async (identification:string) => {
-        const responseStatus = await getKeywordResult(identification);
-
-        const { id, status, urls } :any = responseStatus.data;
-        
-        let newResult = [];
-        newResult = [...result , {
-            id,
-            status,
-            urls,
-            keyword: search,
-            expanded: false,
-        }];
-        setResult(newResult);
-    }
-
     const checkAgain = async (identification:string) => {
         const responseStatus = await getKeywordResult(identification);
 
@@ -42,6 +26,8 @@ const Dashboard: React.FC = () => {
     }
 
     const verifyInput = (search: string) => {
+        console.log(search);
+        
         if(search.length < 4) {
             setErrorMessage("Keyword must have more than 3 characters");
             return;
@@ -61,6 +47,22 @@ const Dashboard: React.FC = () => {
         
         getResult(id);
     };
+
+    const getResult = async (identification:string) => {
+        const responseStatus = await getKeywordResult(identification);
+
+        const { id, status, urls } :any = responseStatus.data;
+        
+        let newResult = [];
+        newResult = [...result , {
+            id,
+            status,
+            urls,
+            keyword: search,
+            expanded: false,
+        }];
+        setResult(newResult);
+    }
 
     const changeExpanded = (id: number) => {
         let newResult = result.map((item, index) => {
@@ -103,7 +105,7 @@ const Dashboard: React.FC = () => {
                               </UrlList>
                               {item.status === 'active' ? <ButtonWrapper>
                                   <Button onClick={() => checkAgain(item.id)}>
-                                    <SearchLabel>Chech Again</SearchLabel>
+                                    <SearchLabel>Check Again</SearchLabel>
                                   </Button>
                               </ButtonWrapper> : null}
                               </DetailsWrapper>                              
