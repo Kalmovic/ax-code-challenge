@@ -19,12 +19,17 @@ export const Content = styled.div`
     max-width: 400px;
 `;
 
-export const InputWrapper = styled.section`
+interface InputWrapperProps {
+    error: boolean;
+}
+
+export const InputWrapper = styled.section<InputWrapperProps>`
     display: flex;
     justify-content: space-between;
     align-items: center;
     background-color: var(--white);
-    border: 1px solid var(--purple);
+    border: ${(props) =>
+        props.error ? "1px solid var(--warning)" : "1px solid var(--purple)"};
     border-radius: 26px;
     padding: 12px 12px 12px 24px;
     width: 100%;

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { getId, getKeywordResult } from "../../services/api";
 import Button from "../Button";
 import Input from "../Input";
@@ -25,9 +25,21 @@ const Dashboard: React.FC = () => {
     const [result, setResult] = React.useState<IResult[]>([]);
     const [search, setSearch] = React.useState("");
     const [errorMessage, setErrorMessage] = React.useState("");
+    const [inputError, setInputError] = React.useState(false);
+
+    useEffect(() => {
+        if (errorMessage.length > 0 && search.length === 0)
+            setInputError(false);
+    }, [search, errorMessage]);
 
     const checkAgain = async (identification: string) => {
         const responseStatus = await getKeywordResult(identification);
+
+        if (responseStatus.status !== 200) {
+            setError(
+                "There was a problem with your request, please try again later"
+            );
+        }
 
         const { id, status, urls }: any = responseStatus.data;
 
@@ -41,22 +53,47 @@ const Dashboard: React.FC = () => {
         setResult(newResult);
     };
 
+    const setError = (error: string) => {
+        setErrorMessage(error);
+        setInputError(true);
+    };
+
     const verifyInput = (search: string) => {
-        if (search.length < 4) {
-            setErrorMessage("Keyword must have more than 3 characters");
+        const connected = navigator.onLine ? true : false;
+        if (!connected) {
+            setError("Please check your connection and try again");
             return;
-        } else if (search.length > 32) {
-            setErrorMessage("Keyword must have less than 33 characters");
+        }
+        const trimmedSearch = search.trim();
+        if (/\s/g.test(trimmedSearch)) {
+            setError("Keyword must be one word");
+            return;
+        }
+        if (trimmedSearch.length < 4) {
+            setError("Keyword must have more than 3 characters");
+            return;
+        } else if (trimmedSearch.length > 32) {
+            setError("Keyword must have less than 33 characters");
             return;
         } else {
-            searchKeyWord(search);
+            searchKeyWord(trimmedSearch);
+            inputError === true && setInputError(false);
             errorMessage !== "" && setErrorMessage("");
         }
+        searchKeyWord(trimmedSearch);
     };
 
     const searchKeyWord = async (keyword: string) => {
         setSearch("");
         const responseId = await getId(keyword);
+        console.log(responseId);
+
+        if (responseId.status !== 200) {
+            setError(
+                "There was a problem with your request, please try again later"
+            );
+        }
+
         const { id }: any = responseId.data;
 
         getResult(id);
@@ -64,6 +101,12 @@ const Dashboard: React.FC = () => {
 
     const getResult = async (identification: string) => {
         const responseStatus = await getKeywordResult(identification);
+
+        if (responseStatus.status !== 200) {
+            setError(
+                "There was a problem with your request, please try again later"
+            );
+        }
 
         const { id, status, urls }: any = responseStatus.data;
 
@@ -92,7 +135,7 @@ const Dashboard: React.FC = () => {
 
     return (
         <Content>
-            <InputWrapper>
+            <InputWrapper data-testid="input-wrapper" error={inputError}>
                 <Input
                     name="Search"
                     value={search}
@@ -142,7 +185,9 @@ const Dashboard: React.FC = () => {
                                                 })
                                             ) : (
                                                 <NotFound>
-                                                    Searching for URLs...
+                                                    {item.status === "active"
+                                                        ? "Searching for URLs..."
+                                                        : "No result found."}
                                                 </NotFound>
                                             )}
                                         </UrlList>
@@ -154,7 +199,7 @@ const Dashboard: React.FC = () => {
                                                     }
                                                 >
                                                     <SearchLabel>
-                                                        Check Again
+                                                        Update
                                                     </SearchLabel>
                                                 </Button>
                                             </ButtonWrapper>
