@@ -104,21 +104,6 @@ export const UrlList = styled.ul`
     display: flex;
     flex-direction: column;
 `;
-export const FoundUrl = styled.span`
-    color: var(--black);
-    word-break: break-all;
-    padding: 5px;
-
-    :nth-child(even) {
-        background-color: var(--yellow-light);
-    }
-
-    & + .found-url {
-        padding-top: 5px;
-    }
-
-    animation: ${opacityChange} 0.4s linear forwards;
-`;
 
 export const NotFound = styled.span`
     color: var(--black);

@@ -2,13 +2,13 @@ import React, { useEffect } from "react";
 import { getId, getKeywordResult } from "../../services/api";
 import Button from "../Button";
 import Input from "../Input";
+import { ListedUrl } from "../ListedUrl";
 import {
     ButtonWrapper,
     Content,
     DetailsWrapper,
     ErrorMessage,
     ExpandSpan,
-    FoundUrl,
     InputWrapper,
     Keyword,
     NotFound,
@@ -175,12 +175,10 @@ const Dashboard: React.FC = () => {
                                             {item.urls.length > 0 ? (
                                                 item.urls.map((url, index) => {
                                                     return (
-                                                        <FoundUrl
-                                                            className="found-url"
+                                                        <ListedUrl
                                                             key={index}
-                                                        >
-                                                            {url}
-                                                        </FoundUrl>
+                                                            url={url}
+                                                        />
                                                     );
                                                 })
                                             ) : (
