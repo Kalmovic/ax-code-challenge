@@ -92,7 +92,6 @@ const Dashboard: React.FC = () => {
         setSearch("");
         setSearchLoading(true);
         const responseId = await getId(keyword);
-        console.log(responseId);
 
         if (responseId.status !== 200) {
             setError(
