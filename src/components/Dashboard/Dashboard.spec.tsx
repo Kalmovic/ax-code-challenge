@@ -364,7 +364,11 @@ test("click to render more urls", async () => {
     act(() => {
         fireEvent.click(screen.getByText(/Search/i));
     });
+    expect(queryByText("Search")).not.toBeInTheDocument();
+    expect(getByText("Loading")).toBeInTheDocument();
+
     await waitFor(() => {
+        expect(getByText("Search")).toBeInTheDocument();
         expect(getByText("value")).toBeInTheDocument();
         expect(getByText("ACTIVE")).toBeInTheDocument();
         expect(getByText("show urls")).toBeInTheDocument();
@@ -387,8 +391,12 @@ test("click to render more urls", async () => {
     act(() => {
         fireEvent.click(screen.getByText(/Update/i));
     });
+    expect(queryByText("Update")).not.toBeInTheDocument();
+    expect(getByText("Loading")).toBeInTheDocument();
+
     await waitFor(() => {
         expect(getByText("url.com")).toBeInTheDocument();
+        expect(getByText("Update")).toBeInTheDocument();
     });
 });
 
@@ -432,9 +440,13 @@ test("status change to done as empty", async () => {
     act(() => {
         fireEvent.click(screen.getByText(/Update/i));
     });
+    expect(getByText("Loading")).toBeInTheDocument();
+    expect(queryByText("Update")).not.toBeInTheDocument();
+
     await waitFor(() => {
         expect(getByText("No result found.")).toBeInTheDocument();
         expect(queryByText("Update")).not.toBeInTheDocument();
+        expect(queryByText("Loading")).not.toBeInTheDocument();
     });
 });
 

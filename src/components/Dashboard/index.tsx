@@ -26,13 +26,17 @@ const Dashboard: React.FC = () => {
     const [search, setSearch] = React.useState("");
     const [errorMessage, setErrorMessage] = React.useState("");
     const [inputError, setInputError] = React.useState(false);
+    const [searchLoading, setSearchLoading] = React.useState(false);
+    const [updateLoading, setUpdateLoading] = React.useState(false);
 
     useEffect(() => {
-        if (errorMessage.length > 0 && search.length === 0)
+        if (errorMessage.length > 0 && search.length === 0) {
             setInputError(false);
+        }
     }, [search, errorMessage]);
 
-    const checkAgain = async (identification: string) => {
+    const update = async (identification: string) => {
+        setUpdateLoading(true);
         const responseStatus = await getKeywordResult(identification);
 
         if (responseStatus.status !== 200) {
@@ -51,11 +55,12 @@ const Dashboard: React.FC = () => {
             return item;
         });
         setResult(newResult);
+        setUpdateLoading(false);
     };
 
     const setError = (error: string) => {
-        setErrorMessage(error);
         setInputError(true);
+        setErrorMessage(error);
     };
 
     const verifyInput = (search: string) => {
@@ -85,6 +90,7 @@ const Dashboard: React.FC = () => {
 
     const searchKeyWord = async (keyword: string) => {
         setSearch("");
+        setSearchLoading(true);
         const responseId = await getId(keyword);
         console.log(responseId);
 
@@ -122,6 +128,7 @@ const Dashboard: React.FC = () => {
             }
         ];
         setResult(newResult);
+        setSearchLoading(false);
     };
 
     const changeExpanded = (id: number) => {
@@ -144,8 +151,13 @@ const Dashboard: React.FC = () => {
                     }
                     placeholder="Search for keywords"
                 />
-                <Button onClick={() => verifyInput(search)}>
-                    <SearchLabel>Search</SearchLabel>
+                <Button
+                    disabled={searchLoading}
+                    onClick={() => verifyInput(search)}
+                >
+                    <SearchLabel>
+                        {searchLoading ? "Loading" : "Search"}
+                    </SearchLabel>
                 </Button>
             </InputWrapper>
             {errorMessage ? <ErrorMessage>{errorMessage}</ErrorMessage> : null}
@@ -192,12 +204,15 @@ const Dashboard: React.FC = () => {
                                         {item.status === "active" ? (
                                             <ButtonWrapper>
                                                 <Button
+                                                    disabled={updateLoading}
                                                     onClick={() =>
-                                                        checkAgain(item.id)
+                                                        update(item.id)
                                                     }
                                                 >
                                                     <SearchLabel>
-                                                        Update
+                                                        {updateLoading
+                                                            ? "Loading"
+                                                            : "Update"}
                                                     </SearchLabel>
                                                 </Button>
                                             </ButtonWrapper>
