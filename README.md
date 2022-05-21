@@ -1,6 +1,6 @@
-# Axur Challenge
+# Challenge
 
-This project has been created to complete Axur Front End Role challenge
+This project has been created to complete Front End Role challenge
 
 ## About the project
 
